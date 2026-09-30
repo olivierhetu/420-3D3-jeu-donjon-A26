@@ -1,16 +1,21 @@
-from ennemi import Ennemi
+from models.ennemie_agressif import EnnemiAgressif
+from models.ennemie_defensif import EnnemiDefensif
+from models.ennemie_aleatoire import EnnemiAleatoire
+from models.ennemie_furtif import EnnemiFurtif
+
 
 class Jeu:
     def __init__(self):
         self.heros_hp = 100
         self.heros_hp_max = 100
         self.heros_attaque = 20
-
-        self.ennemis = [
-            Ennemi("Goblin", 50, 10, "agressif"),
-            Ennemi("Dragon", 100, 20, "defensif"),
-            Ennemi("Voleur", 30, 15, "furtif"),
-        ]
+        
+    ennemis = [
+    EnnemiAgressif("Goblin",  hp=50,  attaque=8),
+    EnnemiDefensif("Dragon",  hp=100, attaque=12),
+    EnnemiAleatoire("Spectre", hp=40, attaque=10),
+    EnnemiFurtif("Voleur",   hp=30,  attaque=10),
+]
 
     def ennemis_vivants(self):
         return [e for e in self.ennemis if e.est_vivant()]
@@ -28,7 +33,7 @@ class Jeu:
             print("\nEnnemis :")
             vivants = self.ennemis_vivants()
             for i, ennemi in enumerate(vivants, 1):
-                print(f"  [{i}] {ennemi.nom} (HP: {ennemi.hp}/{ennemi.hp_max}) — {ennemi.comportement}")
+                print(f"  [{i}] {ennemi.nom} (HP: {ennemi.hp}/{ennemi.hp_max}) — {type(ennemi).__name__}")
             print()
 
             # Demander l'action du héros
@@ -68,7 +73,7 @@ class Jeu:
                 else:
                     degats = self.heros_attaque
                     print(f"Vous attaquez {cible.nom} pour {degats} dégâts !")
-                cible.recevoir_degats(degats)
+                cible.recevoir_degat(degats)
 
             # Résoudre les actions des ennemis
             for ennemi, action_ennemi in actions_ennemis.items():
@@ -87,10 +92,9 @@ class Jeu:
 
             # Adaptation des comportements
             for ennemi in self.ennemis_vivants():
-                if ennemi.hp < ennemi.hp_max * 0.3 and ennemi.comportement != "defensif":
-                    ennemi.comportement = "defensif"
+                if ennemi.hp < ennemi.hp_max * 0.3:
                     print(f"  ⚡ {ennemi.nom} change de tactique — il devient Défensif !")
-
+                    
             print()
             tour += 1
 
